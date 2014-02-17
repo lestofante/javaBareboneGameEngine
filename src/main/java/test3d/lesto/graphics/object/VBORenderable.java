@@ -4,7 +4,7 @@ import org.lwjgl.opengl.ARBBufferObject;
 import org.lwjgl.opengl.ARBVertexBufferObject;
 import org.lwjgl.opengl.GL11;
 
-import test3d.lesto.component.Model3d;
+import test3d.lesto.component.ComponentModel3d;
 
 public class VBORenderable extends GameRenderable {
 
@@ -12,7 +12,7 @@ public class VBORenderable extends GameRenderable {
 	private int normalsBufferID;
 	private int triangleCount;
 
-	public VBORenderable(int vertexBufferID, int normalBufferID, int triangleCount, Model3d model) {
+	public VBORenderable(int vertexBufferID, int normalBufferID, int triangleCount, ComponentModel3d model) {
 		super(model);
 		this.verticesBufferID = vertexBufferID;
 		this.normalsBufferID = normalBufferID;

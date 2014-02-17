@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 
 import org.lwjgl.opengl.ARBBufferObject;
 
-import test3d.lesto.component.Model3d;
+import test3d.lesto.component.ComponentModel3d;
 import test3d.lesto.graphics.loader.Mesh;
 import test3d.lesto.graphics.loader.SimpleObjLoader;
 import test3d.lesto.graphics.loader.Triangle;
@@ -60,13 +60,13 @@ public class ObjectHandler {
 		return out;
 	}
 
-	public RAMRenderable requestRAMMesh(String modelName, Model3d model) throws Exception {
+	public RAMRenderable requestRAMMesh(String modelName, ComponentModel3d model) throws Exception {
 		Mesh temp = getMesh(modelName);
 		RAMRenderable out = new RAMRenderable(temp.verticesBuffer, temp.normalsBuffer, temp.interleavedBuffer, model);
 		return out;
 	}
 
-	public VBORenderable requestVBOMesh(String modelName, Model3d model) throws Exception {
+	public VBORenderable requestVBOMesh(String modelName, ComponentModel3d model) throws Exception {
 		Mesh temp = getMesh(modelName);
 		if (!temp.VBOInitialized) {
 			temp.vertexVBOID = GPUHandler.createVBOID();

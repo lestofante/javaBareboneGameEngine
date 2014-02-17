@@ -1,12 +1,12 @@
 package test3d.lesto.graphics.object;
 
-import test3d.lesto.component.Model3d;
+import test3d.lesto.component.ComponentModel3d;
 
 public abstract class GameRenderable {
 
-	public Model3d model;
+	public ComponentModel3d model;
 
-	public GameRenderable(Model3d model) {
+	public GameRenderable(ComponentModel3d model) {
 		this.model = model;
 	}
 

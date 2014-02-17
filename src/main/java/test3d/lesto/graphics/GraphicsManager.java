@@ -219,15 +219,19 @@ public class GraphicsManager implements Runnable {
 		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_COLOR_BUFFER_BIT);
 		GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION, pos);
 
-		//asyncActionBus.sharedLock.readLock().lock();
-		camera.update();
-
-		for (GameRenderable renderable : toDraw.values()) {
-
-			renderable.render();
-
+		lock.rwl.readLock().lock(); //read lock
+		try{
+			camera.update();
+		
+			for (GameRenderable renderable : toDraw.values()) {
+				renderable.render();
+			}
+		}catch(Throwable e){
+			log.log(Level.SEVERE, "errore imprevisto rendering grafico", e);
+		}finally{
+			lock.rwl.readLock().unlock(); //read UNlock
 		}
-		//asyncActionBus.sharedLock.readLock().unlock();
+		
 
 		// GL11.glFlush();
 		GL11.glFinish();
@@ -242,15 +246,9 @@ public class GraphicsManager implements Runnable {
 		boolean run = true;
 		
 		while (!Display.isCloseRequested() && run ) {
-			lock.rwl.readLock().lock(); //read lock
-			try{
-				update();
-			}catch(Throwable e){
-				log.log(Level.SEVERE, "errore imprevisto rendering grafico. Chiudo display", e);
-				run = false;
-			}finally{
-				lock.rwl.readLock().unlock(); //read UNlock
-			}
+
+			update();
+			
 			Display.sync(60);
 		}
 

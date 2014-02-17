@@ -4,7 +4,7 @@ import java.nio.FloatBuffer;
 
 import org.lwjgl.opengl.GL11;
 
-import test3d.lesto.component.Model3d;
+import test3d.lesto.component.ComponentModel3d;
 
 public class RAMRenderable extends GameRenderable {
 
@@ -17,7 +17,7 @@ public class RAMRenderable extends GameRenderable {
 		setBuffers(verticesBuffer, normalsBuffer, interleavedBuffer);
 	}
 */
-	public RAMRenderable(FloatBuffer verticesBuffer, FloatBuffer normalsBuffer, FloatBuffer interleavedBuffer, Model3d model) {
+	public RAMRenderable(FloatBuffer verticesBuffer, FloatBuffer normalsBuffer, FloatBuffer interleavedBuffer, ComponentModel3d model) {
 		super(model);
 		setBuffers(verticesBuffer, normalsBuffer, interleavedBuffer);
 	}

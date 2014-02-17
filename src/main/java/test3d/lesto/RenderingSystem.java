@@ -3,9 +3,8 @@ package test3d.lesto;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import test3d.lesto.component.Model3d;
-import test3d.lesto.component.Position;
-import test3d.lesto.component.Rotation;
+import test3d.lesto.component.ComponentTransform;
+import test3d.lesto.component.ComponentModel3d;
 import test3d.lesto.graphics.GraphicLock;
 
 import com.artemis.Aspect;
@@ -16,15 +15,16 @@ import com.artemis.annotations.Mapper;
 import com.artemis.utils.ImmutableBag;
 
 public class RenderingSystem extends EntitySystem {
-	@Mapper ComponentMapper<Model3d> modello;
-	@Mapper ComponentMapper<Position> posizione;
-	@Mapper ComponentMapper<Rotation> rotazione;
+	@Mapper ComponentMapper<ComponentModel3d> modello;
+	@Mapper ComponentMapper<ComponentTransform> posizione;
+
 	
 	Logger log = Logger.getLogger( getClass().getName() );
 	private GraphicLock lock;
 	
+	@SuppressWarnings("unchecked")
 	public RenderingSystem(GraphicLock lock) {
-		super( Aspect.getAspectForAll(Model3d.class).one(Position.class, Rotation.class) );
+		super( Aspect.getAspectForAll(ComponentModel3d.class).one(ComponentTransform.class) );
 		this.lock = lock;
 	}
 
@@ -37,28 +37,27 @@ public class RenderingSystem extends EntitySystem {
 	@Override
 	protected void processEntities(ImmutableBag<Entity> arg0) {
 		//write lock
+		//long t = System.nanoTime();
 		lock.rwl.writeLock().lock();
+		//System.out.println("tempo escuzione lock: "+ (System.nanoTime()-t)/1000000 );
 		try{
 			elaborate (arg0);
 		}catch(Throwable e){
 			log.log(Level.SEVERE, "Errore imprevisto elaborazione entità", e);
 		}finally{
-			//write unlock
+			//System.out.println("tempo escuzione lock+elaborate: "+ (System.nanoTime()-t)/1000000 );
+			////write unlock
 			lock.rwl.writeLock().unlock();
 		}
+		//System.out.println("tempo escuzione RenderingSystem: "+ (System.nanoTime()-t)/1000000 );
 	}
 
 	private void elaborate(ImmutableBag<Entity> arg0) {
 		for (Entity e: arg0){
-			Model3d m = modello.get(e);
-			Position p = posizione.get(e);
-			Rotation r = rotazione.get(e);
-			if(p != null){
-				m.setPosizione( p.get() );
-			}
-			if (r != null){
-				m.setRotazione( r.get() );
-			}
+			ComponentModel3d m = modello.get(e);
+			ComponentTransform p = posizione.get(e);
+			
+			m.set( p.get() );
 		}
 	}
 
