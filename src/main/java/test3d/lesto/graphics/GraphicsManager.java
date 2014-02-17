@@ -59,6 +59,8 @@ public class GraphicsManager implements Runnable {
 	private ObjectHandler oHandler;
 
 	private final AsyncActionBus asyncActionBus;
+	
+	private final GraphicLock lock = new GraphicLock();
 
 	/**
 	 * Manages graphics.
@@ -175,7 +177,7 @@ public class GraphicsManager implements Runnable {
 					log.fine("Creating graphical object with ID: "+ toCreate.iD);
 					GameRenderable tempRenderable = null;
 					try {
-						tempRenderable = oHandler.requestVBOMesh(toCreate.modelName, toCreate.transform);
+						tempRenderable = oHandler.requestVBOMesh(toCreate.modelName, toCreate.model);
 					} catch (Exception e) {
 						log.log(Level.SEVERE, "Error loading VBOMesh", e);
 						System.exit(-1);
@@ -237,8 +239,18 @@ public class GraphicsManager implements Runnable {
 
 		init(mode, fullScreen, vSync);
 
-		while (!Display.isCloseRequested()) {
-			update();
+		boolean run = true;
+		
+		while (!Display.isCloseRequested() && run ) {
+			lock.rwl.readLock().lock(); //read lock
+			try{
+				update();
+			}catch(Throwable e){
+				log.log(Level.SEVERE, "errore imprevisto rendering grafico. Chiudo display", e);
+				run = false;
+			}finally{
+				lock.rwl.readLock().unlock(); //read UNlock
+			}
 			Display.sync(60);
 		}
 
@@ -270,6 +282,10 @@ public class GraphicsManager implements Runnable {
 			lastFPS += 1000; // add one second
 		}
 		fps++;
+	}
+
+	public GraphicLock getLock() {
+		return lock;
 	}
 
 }

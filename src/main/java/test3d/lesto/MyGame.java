@@ -2,10 +2,12 @@ package test3d.lesto;
 
 import org.lwjgl.opengl.DisplayMode;
 
+import test3d.lesto.component.Model3d;
 import test3d.lesto.graphics.AsyncActionBus;
 import test3d.lesto.graphics.GraphicsManager;
 import test3d.lesto.graphics.action.G_CreateGameRenderableAction;
 
+import com.artemis.Entity;
 import com.artemis.World;
 
 /**
@@ -30,7 +32,7 @@ public class MyGame
     		
     	//world.setSystem(new MovementSystem());
     	//world.setSystem(new RotationSystem());
-    	world.setSystem(new RenderingSystem());
+    	world.setSystem( new RenderingSystem( graphicEngine.getLock() ) );
     		
     	world.initialize();
     	
@@ -43,6 +45,8 @@ public class MyGame
     	addTestObjects();
     	
     	
+    	modello.rot[1]= 1; //set rotation axis
+    	
     	long lastProcess = System.currentTimeMillis(), tmpProcess;
     	while(true) {
     		tmpProcess = System.currentTimeMillis();
@@ -50,8 +54,8 @@ public class MyGame
     		lastProcess = tmpProcess;
     		world.process();
     		
-    		posizione2d[3] += 1;
-    		
+    		modello.rot[0]++; //add rotation
+
     		try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
@@ -61,9 +65,11 @@ public class MyGame
     	}
     }
     
-    float[] posizione2d = new float[]{0,0,0,0};
-    
+    Model3d modello = new Model3d();
 	private void addTestObjects() {
-		graphicBus.addGraphicsAction(new G_CreateGameRenderableAction(0, "suzanne.obj", posizione2d));
+		Entity giocatore1 = world.createEntity();
+		
+		giocatore1.addComponent(modello);
+		graphicBus.addGraphicsAction(new G_CreateGameRenderableAction(0, "suzanne.obj", modello));
 	}
 }

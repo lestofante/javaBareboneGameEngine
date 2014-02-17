@@ -4,19 +4,21 @@ import java.nio.FloatBuffer;
 
 import org.lwjgl.opengl.GL11;
 
+import test3d.lesto.component.Model3d;
+
 public class RAMRenderable extends GameRenderable {
 
 	protected FloatBuffer normalsBuffer;
 	protected FloatBuffer verticesBuffer;
 	protected FloatBuffer interleavedBuffer;
-
+/*
 	private RAMRenderable(FloatBuffer verticesBuffer, FloatBuffer normalsBuffer, FloatBuffer interleavedBuffer) {
-		super(new float[3]);
+		super( new Model3d() );
 		setBuffers(verticesBuffer, normalsBuffer, interleavedBuffer);
 	}
-
-	public RAMRenderable(FloatBuffer verticesBuffer, FloatBuffer normalsBuffer, FloatBuffer interleavedBuffer, float[] transform) {
-		super(transform);
+*/
+	public RAMRenderable(FloatBuffer verticesBuffer, FloatBuffer normalsBuffer, FloatBuffer interleavedBuffer, Model3d model) {
+		super(model);
 		setBuffers(verticesBuffer, normalsBuffer, interleavedBuffer);
 	}
 
@@ -27,8 +29,8 @@ public class RAMRenderable extends GameRenderable {
 
 		verticesBuffer.rewind();
 
-		GL11.glTranslatef(transform[0], transform[1], transform[2]);
-		GL11.glRotatef((float) Math.toDegrees(transform[3]), 0, 0, 1);
+		GL11.glTranslatef(model.pos[0], model.pos[1], model.pos[2]);
+		GL11.glRotatef((float) Math.toDegrees(model.rot[0]), model.rot[1], model.rot[2], model.rot[3]);
 
 		GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
 		GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
@@ -49,8 +51,8 @@ public class RAMRenderable extends GameRenderable {
 
 		GL11.glPushMatrix();
 
-		GL11.glTranslatef(transform[0], transform[1], 0.0f);
-		GL11.glRotatef((float) Math.toDegrees(transform[2]), 0, 0, 1);
+		GL11.glTranslatef(model.pos[0], model.pos[1], model.pos[2]);
+		GL11.glRotatef((float) Math.toDegrees(model.rot[0]), model.rot[1], model.rot[2], model.rot[3]);
 
 		GL11.glInterleavedArrays(GL11.GL_N3F_V3F, 0, interleavedBuffer);
 		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, interleavedBuffer.capacity() / 6);

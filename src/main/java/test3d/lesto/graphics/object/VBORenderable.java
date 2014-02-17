@@ -4,14 +4,16 @@ import org.lwjgl.opengl.ARBBufferObject;
 import org.lwjgl.opengl.ARBVertexBufferObject;
 import org.lwjgl.opengl.GL11;
 
+import test3d.lesto.component.Model3d;
+
 public class VBORenderable extends GameRenderable {
 
 	private int verticesBufferID;
 	private int normalsBufferID;
 	private int triangleCount;
 
-	public VBORenderable(int vertexBufferID, int normalBufferID, int triangleCount, float[] transform) {
-		super(transform);
+	public VBORenderable(int vertexBufferID, int normalBufferID, int triangleCount, Model3d model) {
+		super(model);
 		this.verticesBufferID = vertexBufferID;
 		this.normalsBufferID = normalBufferID;
 		this.triangleCount = triangleCount;
@@ -22,8 +24,8 @@ public class VBORenderable extends GameRenderable {
 
 		GL11.glPushMatrix();
 
-		GL11.glTranslatef(transform[0], transform[1], transform[2]);
-		GL11.glRotatef((float) Math.toDegrees(transform[3]), 0, 0, 1);
+		GL11.glTranslatef(model.pos[0], model.pos[1], model.pos[2]);
+		GL11.glRotatef((float) Math.toDegrees(model.rot[0]), model.rot[1], model.rot[2], model.rot[3]);
 
 		GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
 		ARBBufferObject.glBindBufferARB(ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, verticesBufferID);

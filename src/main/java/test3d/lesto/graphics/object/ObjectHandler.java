@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 
 import org.lwjgl.opengl.ARBBufferObject;
 
+import test3d.lesto.component.Model3d;
 import test3d.lesto.graphics.loader.Mesh;
 import test3d.lesto.graphics.loader.SimpleObjLoader;
 import test3d.lesto.graphics.loader.Triangle;
@@ -59,13 +60,13 @@ public class ObjectHandler {
 		return out;
 	}
 
-	public RAMRenderable requestRAMMesh(String modelName, float[] transform) throws Exception {
+	public RAMRenderable requestRAMMesh(String modelName, Model3d model) throws Exception {
 		Mesh temp = getMesh(modelName);
-		RAMRenderable out = new RAMRenderable(temp.verticesBuffer, temp.normalsBuffer, temp.interleavedBuffer, transform);
+		RAMRenderable out = new RAMRenderable(temp.verticesBuffer, temp.normalsBuffer, temp.interleavedBuffer, model);
 		return out;
 	}
 
-	public VBORenderable requestVBOMesh(String modelName, float[] transform) throws Exception {
+	public VBORenderable requestVBOMesh(String modelName, Model3d model) throws Exception {
 		Mesh temp = getMesh(modelName);
 		if (!temp.VBOInitialized) {
 			temp.vertexVBOID = GPUHandler.createVBOID();
@@ -74,11 +75,11 @@ public class ObjectHandler {
 			temp.normalVBOID = GPUHandler.createVBOID();
 			GPUHandler.bufferData(temp.normalVBOID, temp.normalsBuffer, ARBBufferObject.GL_STATIC_DRAW_ARB);
 
-			VBORenderable out = new VBORenderable(temp.vertexVBOID, temp.normalVBOID, temp.triangles.size(), transform);
+			VBORenderable out = new VBORenderable(temp.vertexVBOID, temp.normalVBOID, temp.triangles.size(), model);
 			temp.VBOInitialized = true;
 			return out;
 		} else {
-			VBORenderable out = new VBORenderable(temp.vertexVBOID, temp.normalVBOID, temp.triangles.size(), transform);
+			VBORenderable out = new VBORenderable(temp.vertexVBOID, temp.normalVBOID, temp.triangles.size(), model);
 			return out;
 		}
 	}
