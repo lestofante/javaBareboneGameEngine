@@ -77,7 +77,7 @@ public class MyGame {
     		//System.out.println("tempo escuzione artemis2: "+ (System.nanoTime()-t)/1000000 );
     		
     		//t = System.nanoTime();
-    		dynamicsWorld.stepSimulation( elapsed/1000.0f);
+    		dynamicsWorld.stepSimulation( elapsed/1000.0f, 10);
     		//System.out.println("tempo escuzione jbullet: "+ (System.nanoTime()-t)/1000000 );
     		
     		System.out.println("tempo escuzione ciclo: "+ (System.nanoTime()-t)/1000000 );
