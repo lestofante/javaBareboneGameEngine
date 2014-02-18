@@ -225,8 +225,8 @@ public class GraphicsManager implements Runnable {
 		GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION, pos);
 
 		
-		lock.rwl.writeLock().lock(); //read lock
-		dynamicsWorld.stepSimulation(getDelta()/1000f, 10);
+		//TODO: lock.rwl.writeLock().lock(); //read lock
+		dynamicsWorld.stepSimulation(1/60f, 10);
 		try{
 			camera.update();
 		
@@ -236,7 +236,7 @@ public class GraphicsManager implements Runnable {
 		}catch(Throwable e){
 			log.log(Level.SEVERE, "errore imprevisto rendering grafico", e);
 		}finally{
-			lock.rwl.writeLock().unlock(); //read UNlock
+			//TODO: lock.rwl.writeLock().unlock(); //read UNlock
 		}
 		
 
