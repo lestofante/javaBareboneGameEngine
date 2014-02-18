@@ -15,6 +15,8 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
+import com.bulletphysics.dynamics.DynamicsWorld;
+
 import test3d.lesto.graphics.action.G_CreateGameRenderableAction;
 import test3d.lesto.graphics.action.G_FollowObjectWithCamera;
 import test3d.lesto.graphics.action.G_RemoveGameRenderable;
@@ -61,6 +63,7 @@ public class GraphicsManager implements Runnable {
 	private final AsyncActionBus asyncActionBus;
 	
 	private final GraphicLock lock = new GraphicLock();
+	private DynamicsWorld dynamicsWorld;
 
 	/**
 	 * Manages graphics.
@@ -71,14 +74,16 @@ public class GraphicsManager implements Runnable {
 	 *            true to enable, false not to
 	 * @param vSync
 	 *            true to enable, false not to
+	 * @param dynamicsWorld 
 	 */
 
-	public GraphicsManager(DisplayMode mode, boolean fullScreen, boolean vSync, AsyncActionBus asyncActionBus) {
+	public GraphicsManager(DisplayMode mode, boolean fullScreen, boolean vSync, AsyncActionBus asyncActionBus, DynamicsWorld dynamicsWorld) {
 		loadNatives();
 		this.asyncActionBus = asyncActionBus;
 		this.mode = mode;
 		this.fullScreen = fullScreen;
 		this.vSync = vSync;
+		this.dynamicsWorld = dynamicsWorld;
 	}
 
 	public int getDelta() {
@@ -214,12 +219,14 @@ public class GraphicsManager implements Runnable {
 
 		}
 	}
-
+	
 	private void render() {
 		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_COLOR_BUFFER_BIT);
 		GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION, pos);
 
-		lock.rwl.readLock().lock(); //read lock
+		
+		lock.rwl.writeLock().lock(); //read lock
+		dynamicsWorld.stepSimulation(getDelta()/1000f, 10);
 		try{
 			camera.update();
 		
@@ -229,7 +236,7 @@ public class GraphicsManager implements Runnable {
 		}catch(Throwable e){
 			log.log(Level.SEVERE, "errore imprevisto rendering grafico", e);
 		}finally{
-			lock.rwl.readLock().unlock(); //read UNlock
+			lock.rwl.writeLock().unlock(); //read UNlock
 		}
 		
 

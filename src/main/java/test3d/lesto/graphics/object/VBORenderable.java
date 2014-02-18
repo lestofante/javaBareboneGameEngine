@@ -24,7 +24,7 @@ public class VBORenderable extends GameRenderable {
 
 		GL11.glPushMatrix();
 
-		GL11.glTranslatef(model.pos[0], model.pos[1], model.pos[2]);
+		GL11.glTranslatef(model.getTransform().origin.x, model.getTransform().origin.y, model.getTransform().origin.z);
 		GL11.glRotatef((float) Math.toDegrees(model.rot[0]), model.rot[1], model.rot[2], model.rot[3]);
 
 		GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);

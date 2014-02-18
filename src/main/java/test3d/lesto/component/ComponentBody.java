@@ -12,9 +12,14 @@ public class ComponentBody extends Component{
 	public ComponentBody(RigidBody body) {
 		this.myBody = body;
 	}
-
+/*
 	public Transform getTransform() {
-		return myBody.getWorldTransform(ris);
+		myBody.getWorldTransform(ris);
+		return ris;
+	}
+*/
+	public RigidBody getBody() {
+		return myBody;
 	}
 
 }

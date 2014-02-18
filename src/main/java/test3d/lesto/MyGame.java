@@ -31,28 +31,25 @@ public class MyGame {
 	private World world;
 	
 	private final AsyncActionBus graphicBus = new AsyncActionBus();//THIS IS THE BUS TO USE THE GRAPHIC MANAGER
-	private GraphicsManager graphicEngine = new GraphicsManager(new DisplayMode(800, 600), false, true, graphicBus);
+	private GraphicsManager graphicEngine;
 	PhysicUtils physic = new PhysicUtils();
     
     public MyGame() {
-    	world = new World();
+    	
 
-    	world.setSystem( new MovementSystem() );
-    	world.setSystem( new RenderingSystem( graphicEngine.getLock() ) );
+    	DynamicsWorld dynamicsWorld = physic.initPhysics();
     	
-    		
-    	world.initialize();
-    	
+    	graphicEngine = new GraphicsManager(new DisplayMode(800, 600), false, true, graphicBus, dynamicsWorld);
     	
     	Thread graphicsThread = new Thread(graphicEngine);
     	graphicsThread.setName("Client Graphics");
     	graphicsThread.start();
     	
-    	
-    	
-    	
-    	
-    	DynamicsWorld dynamicsWorld = physic.initPhysics();
+    	world = new World();
+    	world.setSystem( new MovementSystem() );
+    	world.setSystem( new RenderingSystem( graphicEngine.getLock() ) );
+    		
+    	world.initialize();
         
         //dynamicsWorld.addRigidBody( createGroundBody() );
         
@@ -62,7 +59,9 @@ public class MyGame {
     	long lastProcess = System.currentTimeMillis(), tmpProcess;
     	long elapsed;
     	long t;
-    	
+    	world.setDelta(10);
+    	world.process();
+    	/*
     	while(true) {
     		
     		tmpProcess = System.currentTimeMillis();
@@ -77,7 +76,8 @@ public class MyGame {
     		//System.out.println("tempo escuzione artemis2: "+ (System.nanoTime()-t)/1000000 );
     		
     		//t = System.nanoTime();
-    		dynamicsWorld.stepSimulation( elapsed/1000.0f, 10);
+    		//dynamicsWorld.stepSimulation( 1/60f, 10);
+    		
     		//System.out.println("tempo escuzione jbullet: "+ (System.nanoTime()-t)/1000000 );
     		
     		System.out.println("tempo escuzione ciclo: "+ (System.nanoTime()-t)/1000000 );
@@ -94,7 +94,7 @@ public class MyGame {
     		}else{
     			System.out.println("time elapsed: "+elapsed);
     		}
-    	}
+    	}*/
     }
 	
 

@@ -54,10 +54,12 @@ public class RenderingSystem extends EntitySystem {
 
 	private void elaborate(ImmutableBag<Entity> arg0) {
 		for (Entity e: arg0){
+			System.out.println("elaborato componente");
 			ComponentModel3d m = modello.get(e);
 			ComponentTransform p = posizione.get(e);
 			
-			m.set( p.get() );
+			//m.set( p.get() );
+			m.set( p.getBody() );
 		}
 	}
 

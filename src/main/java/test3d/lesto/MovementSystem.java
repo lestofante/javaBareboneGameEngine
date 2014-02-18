@@ -30,7 +30,8 @@ public class MovementSystem extends EntitySystem {
 			ComponentBody b = body.get(e);
 			ComponentTransform p = posizione.get(e);
 
-			p.set( b.getTransform() );
+			//p.set( b.getTransform() );
+			p.set( b.getBody() );
 		}
 	}
 
