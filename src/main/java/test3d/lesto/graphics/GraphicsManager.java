@@ -15,6 +15,7 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
+import test3d.lesto.component.ComponentModel3d;
 import test3d.lesto.graphics.action.G_CreateGameRenderableAction;
 import test3d.lesto.graphics.action.G_FollowObjectWithCamera;
 import test3d.lesto.graphics.action.G_RemoveGameRenderable;
@@ -24,6 +25,8 @@ import test3d.lesto.graphics.object.ObjectHandler;
 import test3d.lesto.graphics.utils.Camera;
 
 public class GraphicsManager implements Runnable {
+	
+	ComponentModel3d modello = new ComponentModel3d();
 
 	protected final Logger log = Logger.getLogger( this.getClass().getName() );
 
@@ -61,6 +64,8 @@ public class GraphicsManager implements Runnable {
 	private final AsyncActionBus asyncActionBus;
 	
 	private final GraphicLock lock = new GraphicLock();
+
+	private float increment = 0.05f;
 
 	/**
 	 * Manages graphics.
@@ -120,7 +125,7 @@ public class GraphicsManager implements Runnable {
 		try {
 			Display.setDisplayMode(mode);
 			Display.setFullscreen(fullScreen);
-			Display.setVSyncEnabled(vSync);
+			//Display.setVSyncEnabled(vSync);
 			Display.create();
 
 		} catch (Exception e) {
@@ -161,6 +166,9 @@ public class GraphicsManager implements Runnable {
 		GL11.glEnable(GL11.GL_LIGHT0);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 
+		
+		//smooth test purpoise
+		asyncActionBus.addGraphicsAction(new G_CreateGameRenderableAction(-1, "suzanne.obj", modello));
 	}
 
 	protected void processActions() {
@@ -185,7 +193,7 @@ public class GraphicsManager implements Runnable {
 					toDraw.put(((G_CreateGameRenderableAction) action).iD, tempRenderable);
 				} else {
 					try {
-						throw new Exception();
+						throw new Exception("Object ID already present: "+toCreate.iD);
 					} catch (Exception e) {
 						log.log(Level.SEVERE, "Object ID already present: "+ toCreate.iD, e);
 						System.exit(-1);
@@ -219,7 +227,7 @@ public class GraphicsManager implements Runnable {
 		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_COLOR_BUFFER_BIT);
 		GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION, pos);
 
-		lock.rwl.readLock().lock(); //read lock
+		//lock.rwl.readLock().lock(); //read lock
 		try{
 			camera.update();
 		
@@ -229,7 +237,7 @@ public class GraphicsManager implements Runnable {
 		}catch(Throwable e){
 			log.log(Level.SEVERE, "errore imprevisto rendering grafico", e);
 		}finally{
-			lock.rwl.readLock().unlock(); //read UNlock
+			//lock.rwl.readLock().unlock(); //read UNlock
 		}
 		
 
@@ -249,7 +257,7 @@ public class GraphicsManager implements Runnable {
 
 			update();
 			
-			Display.sync(60);
+			Display.sync(120);
 		}
 
 		asyncActionBus.graphicsStarted.set(false);
@@ -264,6 +272,10 @@ public class GraphicsManager implements Runnable {
 	}
 
 	public void update() {
+		modello.pos[1] += increment;
+		if (Math.abs(modello.pos[1])> 20 ){
+			increment*=-1;
+		}
 		processActions();
 		render();
 		Display.update();
